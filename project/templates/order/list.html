@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row d-flex justify-content-center align-items-center">
+   <div class="col col-md-6">
+      <div class="card pb-3">
+         <div class="card-header">Orders {{request.user}}</div>
+         {% for order in object_list %}
+         <div class="row px-3 mt-4">
+            <div class="col col-md-6 card-text">
+               <p> Iнформація про замовлення  {{order.order_number}} </p>
+               <ul>
+                  <li>is_active: {{order.is_active}}</li>
+                  <li>is_paid: {{order.is_paid}}</li>
+                  <li>total_amount: {{order.total_amount}}</li>
+               </ul>
+               <input hidden name="order_number" value="{{order.order_number}}" >
+            </div>
+            <div class="col col-md-6 ">
+               <p>інформація про товари в замовленні:</p>
+               <ul class="list-group">
+                  {% for orderitem in order.order_items.through %}
+                  <li><a href="item/{{orderitem.id}}/detail">{{orderitem.item_id.caption}}  {{orderitem.item_price}} x {{orderitem.quantity}} {% if orderitem.discount_id %}with discount: {{orderitem.discount_id.code}}{% endif %}</a></li>
+                  {% endfor %}
+               </ul>
+            </div>
+         </div>
+         {% endfor %}
+      </div>
+   </div>
+</div>
+{% endblock content %}

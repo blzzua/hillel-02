@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row d-flex justify-content-center align-items-center">
+   <div class="col col-md-6">
+      <div class="card pb-3">
+         <div class="card-header">Favorites {{request.user}}</div>
+         {% for fav in object_list %}
+            <div class="row px-3 mt-4">
+               <div class="col card-text">
+                  <div class="card" style="">
+                     <div style="background: #D2D2D2 {% if fav.item_id.image %}url({{ fav.item_id.image.url }}{% endif %}); background-size: cover; background-position: center; background-repeat: no-repeat; width: 100%; height: 350px;"></div>
+                     <div class="card-body">
+                         <h5 class="card-title">{{ fav.item_id.caption }} - <strong>{{ fav.item_id.price }}</strong></h5>
+                         <p class="card-text">{{fav.item_id.description | truncatechars:255 }}</p>
+                         <a  href="{% url 'add_orderitem' %}?item={{fav.item_id.id}}" class="btn btn-primary">Order</a>
+                        <form method="post" action="{% url 'favorite_del' %}">{% csrf_token %}
+                        <button name="item_id" value="{{fav.item_id.id}}" class="btn btn-outline-secondary">Remove from favorites</button>
+                        </form>
+                     </div>
+                 </div>
+               </div>
+            </div>
+         {% endfor %}
+      </div>
+   </div>
+</div>
+{% endblock content %}

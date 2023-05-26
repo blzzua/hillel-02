@@ -1,0 +1,78 @@
+<header>
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{% url 'main_page' %}">Valheim food shop</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+        {% if request.user.is_authenticated %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Items
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{% url 'items_list' %}">Show Items</a></li>
+            {% if request.user.is_authenticated %}
+            <li><a class="dropdown-item" href="{% url 'items_create' %}">Create</a></li>
+            {% endif %}
+          </ul>
+        </li>
+        {% else %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'items_list' %}">Items</a></li>
+        {%endif%}
+
+        {% if request.user.is_authenticated %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Feedback
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'feedback_list' %}">Show Feedbacks</a></li>
+              <li><a class="dropdown-item" href="{% url 'feedback_index' %}">Add feedback</a></li>
+              <li><a class="dropdown-item" href="{% url 'main_contacts' %}">Contact</a></li>
+            </ul>
+          </li>
+        {% else %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'feedback_list' %}">Feedbacks</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'main_contacts' %}">Contact</a></li>
+        {%endif%}
+
+        {% if request.user.is_authenticated %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Orders
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{% url 'order_detail' %}">Show Order</a></li>
+            <li><a class="dropdown-item" href="{% url 'order_list' %}">List Orders</a></li>
+          </ul>
+        </li>
+        {% else %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'items_list' %}">Orders</a></li>
+        {%endif%}
+
+        {% if request.user.is_authenticated %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'accounts_personal_information' %}">Profile</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'favorite_list' %}">Favorites</a></li>
+        {% else %}
+          <li class="nav-item"><a class="nav-link link-disabled" href="#">Favorites</a></li>
+        {%endif%}
+
+      </ul>
+      <form class="d-flex" role="search">
+        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success" type="submit">Search</button>
+      </form>
+      {% if request.user.is_anonymous %}
+        <a class="btn btn-link" role="button" href="{% url 'accounts_login' %}">Login</a>
+        <a class="btn btn-link" role="button" href="{% url 'accounts_registration' %}">Register</a>
+      {% else %}
+        <a class="btn btn-secondary" role="button" href="{% url 'accounts_logout' %}" >Logout</a>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+</header>

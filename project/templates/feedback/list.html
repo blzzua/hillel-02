@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="jumbotron jumbotron-fluid">
+  <div class="container">
+    <h1 class="display-4 text-center">Feedbacks</h1>
+{% for f in object_list %}
+  </div>
+      <div class="container col-xl-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <div class="card-title">
+                    <span class="card-subtitle">{{f.rating_as_stars}}</span>
+                    (<span class="card-subtitle mb-2 text-muted">{{f.name|default_if_none:"satisfied customer" }}</span>)
+                </div>
+                <p class="card-text text-right"> {{f.response}}</p>
+            </div>
+        </div>
+      <br>
+    {% empty %}
+       <h4>No articles yet.</h4>
+    {%endfor%}
+
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+        {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+        {% endif %}
+        <li class="page-item active"><a class="page-link inactive" href="#">{{ page_obj.number }}</a></li>
+        {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+        {% endif %}
+        </ul>
+    </nav>
+
+  </div>
+</div>
+{% endblock %}

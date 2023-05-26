@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+    <div class="jumbotron jumbotron-fluid text-center">
+      <div class="container">
+        <h1 class="display-4">Confirm phone</h1>
+      </div>
+    </div>
+
+    <div class="container">
+        <div class="form-group row d-flex justify-content-center align-items-center">
+            <div class="col-xl-4">
+                <form method="post" class="form mx-auto">
+                    {{ form.errors }}
+                    {% csrf_token %}
+                    {% bootstrap_form form %}
+                    <button class="btn btn-success" type="submit" id="id_submit_button" tabindex="4" disabled>Confirm</button>
+                    <button class="btn btn-danger" type="reset" tabindex="-1" >Cancel</button>
+                    <button class="btn btn-primary" onclick="send_OTP('{{ csrf_token }}', this)" tabindex="2">Send OTP</button>
+                </form>
+            </div>
+        </div>
+    {% for  error in form.errors %}
+        <p>{{ errors }}</p>
+    {% endfor %}
+    </div>
+
+<script>
+function send_OTP(csrf_token, button) {
+  event.preventDefault();
+  var emailInput = document.getElementById("id_phone_number");
+  var phone_number = emailInput.value;
+  var pattern = /^\+?(?:38)?0\d{9}$/;
+  if (!pattern.test(phone_number)) {
+    emailInput.classList.add("is-invalid");
+    return;
+  }
+  else{
+    emailInput.classList.remove("is-invalid");
+    emailInput.classList.add("is-valid");
+  }
+
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", "/accounts/send_otp", true);
+
+  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  xhr.setRequestHeader("X-CSRFToken", csrf_token);
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+      console.log(xhr.responseText);
+    }
+  };
+  var params = "phone_number=" + phone_number;
+  xhr.send(params);
+
+  submit_button = document.getElementById("id_submit_button");
+  submit_button.disabled = false;
+  otp_input = document.getElementById("id_otp");
+  otp_input.disabled = false;
+  button.disabled = true;
+  button.classList.remove("btn-primary");
+  button.classList.add("btn-disabled");
+  document.getElementById("id_password").disabled = true;
+  otp_input.focus()
+
+  setTimeout(function(){
+    button.textContent  = 'Send OTP again';
+  },35000);
+  setTimeout(function(){
+    button.disabled = false;
+    button.classList.remove("btn-disabled");
+    button.classList.add("btn-primary");
+    }, 60000);
+
+}
+</script>
+
+{% endblock %}
+
+

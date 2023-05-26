@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+<div class="jumbotron-fluid text-center">
+    <div class="container">
+        <div class="row">
+            <div class="col"><h1 class="display-3">Import-Export  Items</h1></div>
+        </div>
+        <div class="row">
+           {% if request.user.is_staff %}
+            <div class="col-6">
+                <h3 class="display-8">Upload CSV File</h3>
+                <div class="form-group">
+                    <form class="form" method="post" enctype="multipart/form-data" action="{% url 'import_items_csv' %}">
+                        {{ form.errors }}
+                        <!-- {{ form.as_p }} -->
+                        {% csrf_token %}
+                        {% bootstrap_form form %}
+                        {% bootstrap_button button_type="submit" content="Upload" %}
+                        {% bootstrap_button button_type="reset" content="Cancel" %}
+                    </form>
+                </div>
+                {% for error in form.errors %}
+                <p>{{ errors }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+            <div class="col-6">
+                <h3 class="display-8">Export CSV File</h3>
+                <form class="form" method="get" action="{% url 'export_items_csv' %}">
+                    <!-- <a class="btn btn-outline-success" href="{% url 'export_items_csv' %}">Download</a> -->
+                    <button class="btn btn-outline-success">Download</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+    {% if upload_items %}
+            <hr class="my-12 mt-5"/>
+            <h3 class="display-8 ">Uploaded Items</h3>
+            <div class="row mx-5 mt-5">
+            <table class="table">
+              <thead class="thead-dark">
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Caption</th>
+                  <th scope="col">SKU</th>
+                  <th scope="col">Description</th>
+                </tr>
+              </thead>
+                  <tbody>
+                {% for item in upload_items %}
+                    <tr class="{% if item.upload_result == 'upload' %}bg-success{% elif item.upload_result == 'error' %}bg-danger{% elif item.upload_result == 'ignore' %}bg-secondary{% endif %}"
+                        title="{% if item.upload_result == 'upload' %}New item was successfully uploaded or updated.{% elif item.upload_result == 'error'%}Item has errors.{% elif item.upload_result == 'ignore' %}Duplicate item caption was ignored.{% endif %}" >
+                        <th scope="row">{{forloop.counter}}</th>
+                        <td>{{ item.caption }}</td>
+                        <td><strong>{{ item.price }}</strong></td>
+                        <td>{{item.sku }}</td>
+                        <td>{{item.description | truncatechars:79 }}</td>
+                        </tr>
+                {% endfor %}
+                  </tbody>
+            </table>
+    {% endif %}
+    </div>
+</div>
+
+{% endblock %}

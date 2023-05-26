@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+{% if request.user.is_anonymous %}
+    <a href="{% url 'accounts_login' %}" >Login</a>
+    <a href="{% url 'accounts_registration' %}" >Register</a>
+{% else %}
+<div class="container col-6">
+    <h1>Personal Account {{ request.user }}</h1>
+    <ul class="list-group">
+    {% for key, value in user.items %}
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col-2">{{ key }}
+                </div><div class="col">
+                <tt>{{ value }}</tt></div>
+            </div>
+        </li>
+    {% endfor %}
+    </ul>
+    <a href="{% url 'accounts_confirm_phone' %}">change phone number</a>
+    </div>
+</div>
+{% endif %}
+{% endblock content %}

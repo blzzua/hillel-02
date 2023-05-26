@@ -1,0 +1,7 @@
+{% if messages %}{% for message in messages %}
+    {% if message.extra_tags == 'HEADER' %}
+    <div class="alert {% if message.level >= 40 %}alert-danger{% elif message.level >= 30 %}alert-warning{% elif message.level >= 25 %}alert-success{% elif message.level >= 20 %}alert-info {% else %}alert-primary{% endif %}" role="alert">
+        {{ message }}
+    </div>
+    {% endif %}
+{% endfor %}{% endif %}

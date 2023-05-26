@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+    <div class="col-12 col-lg-4 offset-lg-4 my-3 my-lg-5">
+        <h2>Contact Us</h2>
+        <form method="post">
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            <input type="submit" class="btn btn-success w-100 mt-3" value="Send">
+
+        </form>
+    </div>
+{% endblock content %}

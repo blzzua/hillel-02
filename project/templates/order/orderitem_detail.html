@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row d-flex justify-content-center align-items-center">
+    <div class="col col-md-6">
+    <form method="post" action="">
+        {% csrf_token %}
+        <div class="card" style="width: 100%;">
+                <h5 class="card-header active">Order header {{order_item.order_id.order_number}}</h5>
+                <div class="row">
+                    <div class="col card-text">
+                        <input hidden name="order_item" value="{{order_item.id}}" >
+                        <ul class="list-group ">
+                            <li class="list-group-item" >Iнформація про {{order_item.item_id.caption}} замовлення {{order_item.order_id}}</li>
+                            <li class="list-group-item">id: {{order_item.id}}</li>
+                            <li class="list-group-item">is_active: {{order_item.is_active}}</li>
+                            <li class="list-group-item">order_id: {{order_item.order_id}}</li>
+                            <li class="list-group-item">item_id {{order_item.item_id}}</li>
+                            <li class="list-group-item">item: {{order_item.item_id.caption}}</li>
+                            <li class="list-group-item">discount_id: {{order_item.discount_id}}</li>
+                            <li class="list-group-item d-flex justify-content-start align-items-center">
+                              <div class="row">
+                                <label class="col-form-label col-sm-3" for="id_quantity">quantity:</label>
+                                <div class="col-sm-9">
+                                  <input type="number" id="id_quantity" name="quantity" class="form-control" value="{{order_item.quantity}}" min="1" max="99">
+                                </div>
+                              </div>
+                            </li>
+                            <li class="list-group-item">discount_amount: {{order_item.discount_amount}}</li>
+                        </ul>
+                   </div>
+                   </div>
+                </div>
+    <button type="submit" class="btn btn-danger" formaction="{% url 'order_item_delete' orderitem_id=order_item.id %}">Delete Item from Order</button>
+    <button type="submit" class="btn btn-primary" formaction="#TODO">Confirm Changes Order </button>
+    </form>
+    </div>
+</div>
+{% endblock content %}
