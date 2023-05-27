@@ -24,6 +24,7 @@ app.autodiscover_tasks()
 import django   # noqa
 django.setup()
 from orders.models import Order  # noqa
+from items.models import Item  # noqa
 
 API_TOKEN = os.environ.get('CELERY_TGBOT_APIKEY')
 CHATID_ORDER = os.environ.get('CELERY_TG_CHATID_ORDER')
@@ -83,3 +84,5 @@ def mail_admins_task(self, message_parts):
         logging.debug('Повідомлення успішно надіслано')
     except Exception as e:
         logging.error('Помилка підключення або відправки повідомлення:', str(e))
+
+
