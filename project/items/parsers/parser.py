@@ -59,25 +59,37 @@ class AbstractItemParser():
         """sku format from source ID and source SKU"""
         item.sku = f"{self.source_id}:{sku}"
 
-    def get_html(self, url):
+    def get_html(self, url, *args, **kwargs):
         """helper"""
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/113.0',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-            'Accept-Language': 'uk,en-US;q=0.7,en;q=0.3',
-            'Connection': 'keep-alive',
-        }
+        if 'headers' in kwargs:
+            headers = kwargs.get('headers')
+        else:
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/113.0',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+                'Accept-Language': 'uk,en-US;q=0.7,en;q=0.3',
+                'Connection': 'keep-alive',
+            }
         r = requests.get(url=url, headers=headers)
         if r.ok:
             return r.text
         else:
             return ''
 
-    def set_item_image_from_url(self, item, url):
+    def set_item_image_from_url(self, item, url, *args, **kwargs):
         """helper for save image from url"""
         filename = os.path.basename(url)
+        if 'headers' in kwargs:
+            headers = kwargs.get('headers')
+        else:
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/113.0',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+                'Accept-Language': 'uk,en-US;q=0.7,en;q=0.3',
+                'Connection': 'keep-alive',
+            }
         try:
-            r = requests.get(url=url)
+            r = requests.get(url=url, headers=headers)
             if r.status_code == 200:
                 image_data = ImageFile(BytesIO(r.content), name=filename)
                 item.image = image_data
@@ -105,17 +117,6 @@ class AbstractItemParser():
 
 
 
-
-
-def parse(parser: AbstractItemParser):
-    for item in parser:
-        Item.objects.update_or_create(sku=item.sku,
-                                      defaults={'caption': item.caption,
-                                                'price': item.price,
-                                                'description': item.description,
-                                                'is_active': item.is_active,
-                                                'image': item.image,
-                                                 })
 
 
 
