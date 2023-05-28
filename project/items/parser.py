@@ -13,8 +13,17 @@ item_parser_sources = [
         'source_name': 'foodandwine',
         'is_price_included': False,
         'is_active': False,
-        'url': 'https://www.foodandwine.com/recipes'
+        'url': 'https://www.foodandwine.com/',
+        'dataurl': 'https://www.foodandwine.com/recipes'
     },
+    {
+        'source_id': 'MRB',
+        'source_name': 'myasorub',
+        'is_price_included': False,
+        'is_active': True,
+        'url': 'https://myasorub.if.ua/',
+        'dataurl': 'https://store.tildacdn.com/api/getproductslist/?storepartuid=349572444851&recid=325946910&getparts=false&getoptions=false&size=99'
+    }
 ]
 
 
@@ -64,12 +73,13 @@ def parse_food_and_wine():
         'source_name': 'foodandwine',
         'is_price_included': False,
         'is_active': False,
-        'url': 'https://www.foodandwine.com/recipes'
+        'url': 'https://www.foodandwine.com/',
+        'dataurl': 'https://www.foodandwine.com/recipes'
     }
-    url = item_parser_source['url']  # todo: validate url as img-url.
+    dataurl = item_parser_source['dataurl']  # todo: validate url as img-url.
     is_active = item_parser_source['is_active']
 
-    html = get_html(url)
+    html = get_html(dataurl)
     soup = BeautifulSoup(html)
     cards_container = soup.find('div', class_="loc fixedContent")
     cards_list = cards_container.find_all('a', class_="mntl-card-list-items")
@@ -101,9 +111,9 @@ def parse_myasorub():
         'dataurl': 'https://store.tildacdn.com/api/getproductslist/?storepartuid=349572444851&recid=325946910&getparts=false&getoptions=false&size=99'
     }
 
-    url = item_parser_source['dataurl']  # todo: validate url as img-url.
+    dataurl = item_parser_source['dataurl']
     is_active = item_parser_source['is_active']
-    content = get_html(url)
+    content = get_html(dataurl)
     data = json.loads(content)
     for card in data['products']:
         url = card.get('url')
