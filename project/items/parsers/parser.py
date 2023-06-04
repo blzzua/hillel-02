@@ -8,27 +8,6 @@ from django.core.files.images import ImageFile
 from items.models import Item
 
 
-item_parser_sources = [
-    {
-        'source_id': 'FAW',
-        'source_name': 'foodandwine',
-        'is_price_included': False,
-        'is_active': False,
-        'url': 'https://www.foodandwine.com/',
-        'dataurl': 'https://www.foodandwine.com/recipes'
-    },
-    {
-        'source_id': 'MRB',
-        'source_name': 'myasorub',
-        'is_price_included': False,
-        'is_active': True,
-        'url': 'https://myasorub.if.ua/',
-        'dataurl': 'https://store.tildacdn.com/api/getproductslist/?storepartuid=349572444851&recid=325946910&getparts=false&getoptions=false&size=99'
-    }
-]
-
-
-
 class AbstractItemParser():
     def __init__(self, item_parser_source):
         """item_parser_source = {
@@ -111,12 +90,3 @@ class AbstractItemParser():
             return current_item
         else:
             raise StopIteration
-
-
-
-
-
-
-
-
-

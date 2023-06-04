@@ -13,3 +13,5 @@ def parse(parser: AbstractItemParser):
                                                 'image': item.image,
                                                  })
 
+
+__ALL__ = ['AbstractItemParser', 'FoodAndWineParser', 'MyasorubParser', 'ZarabuduParser', 'parse']
