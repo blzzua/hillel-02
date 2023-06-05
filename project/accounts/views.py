@@ -1,8 +1,13 @@
+from django.contrib.auth.tokens import default_token_generator
+from django.core.exceptions import ImproperlyConfigured, ValidationError
+from django.http import Http404
 from django.shortcuts import render, redirect
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views.generic import TemplateView, RedirectView, FormView
 from django.views.generic.edit import FormMixin
 from django.contrib.auth import login, authenticate, logout
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from accounts.forms import RegistrationForm, LoginForm, OtpForm, ConfirmPhoneForm
 from django.contrib.auth import get_user_model
 from project.celery import send_otp
@@ -10,6 +15,7 @@ from project.constants import OTP_LENGTH
 from random import randint
 from django.core.cache import caches
 from django.contrib import messages
+from .tasks import send_registration_email
 
 User = get_user_model()
 otp_storage = caches['otp']
@@ -24,20 +30,20 @@ class LoginView(FormView):
         context = super().get_context_data()
         form = LoginForm(request.POST)
         if form.is_valid():
-            user = authenticate(
-                request, email=form.cleaned_data.get('email'),
-                password=form.cleaned_data.get('password')
-            )
+            user = authenticate(request, email=form.cleaned_data.get('email'),
+                                password=form.cleaned_data.get('password'))
             if user:
                 login(request, user)
-                messages.success(request=request, message=f'WELLCOME {user.email} info', extra_tags="HEADER")
-                messages.info(request=request, message=f'this is info message', extra_tags="HEADER")
-                messages.debug(request=request, message=f'this is debug message', extra_tags="HEADER")
-                messages.warning(request=request, message=f'this is warning message', extra_tags="HEADER")
-                messages.error(request=request, message=f'this is error message', extra_tags="HEADER")
-                messages.error(request=request, message=f'this is error message but not shown because does not have extratag')
+                messages.success(request=request, message=f'WELLCOME {user.email} info', extra_tags="HEADER")  # noqa
+                messages.info(request=request, message=f'this is info message', extra_tags="HEADER")  # noqa
+                messages.debug(request=request, message=f'this is debug message', extra_tags="HEADER")  # noqa
+                messages.warning(request=request, message=f'this is warning message', extra_tags="HEADER")  # noqa
+                messages.error(request=request, message=f'this is error message', extra_tags="HEADER")  # noqa
+                messages.error(request=request,
+                               message=f'this is error message but not shown because does not have extratag')  # noqa
                 return redirect('accounts_personal_information')
             else:
+                messages.error(request=request, message=f'{user}', extra_tags="HEADER")
                 form.add_error('password', 'LOGIN FAILED')
                 context['form'] = form
 
@@ -49,17 +55,69 @@ class RegistrationView(TemplateView, FormMixin):
     template_name = 'accounts/registration.html'
     get_redirect_url = 'accounts_personal_information'
     form_class = RegistrationForm
+    success_url = reverse_lazy('main')
+    email_template_name = "accounts/registration_email.html"
+    extra_email_context = None
+    from_email = None
+    html_email_template_name = None
+    token_generator = default_token_generator
 
     def post(self, request):
         form = RegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
+
+            context = {
+                "domain": 'shop.com',
+                "site_name": 'shop.com',
+                "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+                "token": self.token_generator.make_token(user),
+                "protocol": "https" if request.is_secure() else "http",
+                **(self.extra_email_context or {}),
+            }
+            send_registration_email(
+                self.email_template_name,
+                context,
+                self.from_email,
+                user.email,
+                self.html_email_template_name
+            )
             print(request, 'You have singed up successfully.')
-            login(request, user)
+            messages.success(request, 'We will send email with registration link. '
+                                      'Please follow link and continue your registration flow.',
+                             extra_tags="HEADER")
+            # login(request, user)
             return redirect('accounts_personal_information')
         else:
             #   request, template_name, context=None, content_type=None, status=None, using=None
             return render(request=request, template_name=self.template_name)
+
+
+class RegistrationConfirmView(RedirectView):
+    url = reverse_lazy('accounts_login')
+    user = None
+
+    def dispatch(self, *args, **kwargs):
+        if "uidb64" not in kwargs or "token" not in kwargs:
+            raise ImproperlyConfigured(
+                "The URL path must contain 'uidb64' and 'token' parameters."
+            )
+        self.user = self.get_user(kwargs["uidb64"])
+        if self.user is None:
+            raise Http404
+        if not default_token_generator.check_token(self.user, kwargs["token"]):
+            raise Http404
+        self.user.is_active = True
+        self.user.save()
+        return super().dispatch(*args, **kwargs)
+
+    def get_user(self, uidb64):
+        try:
+            uid = urlsafe_base64_decode(uidb64).decode()
+            user = User.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist, ValidationError):
+            user = None
+        return user
 
 
 class LogoutView(RedirectView):

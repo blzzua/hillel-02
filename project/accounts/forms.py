@@ -53,11 +53,13 @@ class RegistrationForm(UserCreationForm):
         model = User
         fields = ['email', 'password1', 'password2']
 
-    def save(self, commit=True):
+    def save(self, commit=True, *args, **kwargs):
         user = super().save(commit=False)
-        print(self)
-        user.email = self.cleaned_data.get('email').split('@')[0]
-        user.save()
+        user.email = self.cleaned_data.get('email')
+        user.set_password(self.cleaned_data["password1"])
+        user.is_active = False
+        if commit:
+            user.save()
         return user
 
 

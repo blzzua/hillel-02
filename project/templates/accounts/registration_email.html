@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration</title>
+</head>
+<body>
+<div>
+    <h2>"Folow link to continue registration:"</h2>
+    <p>
+        <a href="{{ protocol }}://{{ domain }}{% url 'registration_confirm' uidb64=uid token=token %}">
+            Follow link</a>
+    </p>
+    <p>"Thanks for using our site!"</p>
+</div>
+</body>
+</html>
