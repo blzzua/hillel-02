@@ -7,21 +7,34 @@
       </div>
     </div>
 
+
+
     <div class="container">
-        <div class="row">
-            <nav aria-label="Page navigation example">
-                <ul class="pagination">
+    {% if page_obj %}
+        <div class="d-flex align-items-center flex-column">
+            <div class="pagination my-3">
                 {% if page_obj.has_previous %}
-                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+                    <span class="page-item">
+                        <a class="page-link"
+                           href="?page={{ page_obj.previous_page_number }}">previous</a>
+                    </span>
                 {% endif %}
-                <li class="page-item active"><a class="page-link inactive" href="#">{{ page_obj.number }}</a></li>
-                {% if page_obj.has_next %}
-                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+                {% for i in "x"|rjust:page_obj.paginator.num_pages %}
+                    <span class="page-item {% if page_obj.number == forloop.counter %}active{% endif %}">
+                        <a class="page-link"
+                           href="?page={{ forloop.counter }}">{{ forloop.counter }}</a>
+                    </span>
+                {% endfor %}
+                {% if page_obj.has_previous %}
+                    <span class="page-item">
+                        <a class="page-link"
+                           href="?page={{ page_obj.paginator.num_pages }}">last</a>
+                    </span>
                 {% endif %}
-                </ul>
-            </nav>
+            </div>
         </div>
-	    <div class="row">
+    {% endif %}
+        <div class="row">
 			{% for product in object_list %}
 				<div class="col-md-3" style="margin-bottom: 10px; padding: 0px 5px;">
 					<div class="card" style="">
