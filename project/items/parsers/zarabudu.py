@@ -10,7 +10,7 @@ class ZarabuduParser(AbstractItemParser):
                            'source_name': 'zarabudu',
                            'is_price_included': True,
                            'is_active': True,
-                           'url': 'https://zarabudu.com.ua/',items/parsers/parser.py
+                           'url': 'https://zarabudu.com.ua/',
                            'dataurl': 'https://zarabudu.com.ua/product-category/stravy-churrasco/'
                        })
 
