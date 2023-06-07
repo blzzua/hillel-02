@@ -13,7 +13,7 @@ from django.views.generic import ListView, View
 from django.core.paginator import Paginator
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
-from .filters import ItemFilter
+from .filters import SearchItemFilter
 from django_filters.views import FilterMixin, FilterView
 
 
@@ -25,7 +25,7 @@ def filter_item_list(request):
 class ItemsListView(ListView, FilterMixin):
     model = Item
     template_name = 'items/list.html'
-    filter = ItemFilter
+    filter = SearchItemFilter
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
