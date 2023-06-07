@@ -14,8 +14,15 @@ from django.core.paginator import Paginator
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from .filters import ItemFilter
+from django_filters.views import FilterMixin, FilterView
 
-class ItemsListView(ListView):
+
+def filter_item_list(request):
+    filter = ItemFilter(request.GET, queryset=Item.objects.all())
+    context = {'object_list': filter.qs, 'filter': filter}
+    return render(request=request, template_name='items/list.html', context=context)
+
+class ItemsListView(ListView, FilterMixin):
     model = Item
     template_name = 'items/list.html'
     filter = ItemFilter
@@ -24,12 +31,17 @@ class ItemsListView(ListView):
         context = super().get_context_data(*args, **kwargs)
         f = self.filter(self.request.GET, queryset=Item.objects.all())
         context['filter'] = f
+        context['object_list'] = f.qs
         return context
 
     def get_queryset(self):
         queryset = super().get_queryset()
         queryset = queryset.filter(is_active=True)
         return queryset
+
+    def render_to_response(self, context, **response_kwargs):
+        print(context)
+        return super().render_to_response(context, **response_kwargs)
 
 
 class ItemCreateView(View):
