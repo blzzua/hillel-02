@@ -13,11 +13,18 @@ from django.views.generic import ListView, View
 from django.core.paginator import Paginator
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
-
+from .filters import ItemFilter
 
 class ItemsListView(ListView):
     model = Item
     template_name = 'items/list.html'
+    filter = ItemFilter
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        f = self.filter(self.request.GET, queryset=Item.objects.all())
+        context['filter'] = f
+        return context
 
     def get_queryset(self):
         queryset = super().get_queryset()
