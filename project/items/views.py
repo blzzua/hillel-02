@@ -39,10 +39,6 @@ class ItemsListView(ListView, FilterMixin):
         queryset = queryset.filter(is_active=True)
         return queryset
 
-    def render_to_response(self, context, **response_kwargs):
-        print(context)
-        return super().render_to_response(context, **response_kwargs)
-
 
 class ItemCreateView(View):
     def get(self, request):

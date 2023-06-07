@@ -3,13 +3,6 @@ from django.db.models import Q, F, Value, Case, When, CharField
 from django.utils import timezone
 from items.models import Item
 
-class ItemFilter(django_filters.FilterSet):
-    caption = django_filters.CharFilter(lookup_expr='icontains')
-
-    class Meta:
-        model = Item
-        fields = ['caption']
-
 class SearchItemFilter(django_filters.FilterSet):
     query = django_filters.CharFilter(method='custom_filter', label='Query')
     def custom_filter(self, queryset, name, value):
@@ -19,8 +12,8 @@ class SearchItemFilter(django_filters.FilterSet):
             default=Value(2),
             output_field=CharField()
         )
-
     ).order_by('match', 'caption')
+
     class Meta:
         model = Item
         fields = ['query']
