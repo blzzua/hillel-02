@@ -1,12 +1,31 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
+
+
     <div class="jumbotron jumbotron-fluid text-center">
       <div class="container">
         <h1 class="display-4">All Items</h1>
+	  </div>
+	<div>
+		<div class="col-mb-3">
+				<div class="input-group">
+					<form method="get">
+					<div>
+						<span class="input-group-text">Caption:</span>
+						<input type="text" name="caption" class="form-control" id="id_caption">
+					</div>
+					<div>
+						<span class="input-group-text">Price: <input type="text" name="price_min" id="id_price_0" class="form-control" size="3"> - <input type="text" name="price_max" id="id_price_1" class="form-control" size="3"></span>
+					  </div>
+						<button type="submit" class="btn btn-primary">Submit</button>
+					</form>
 
-      </div>
-    </div>
+				</div>
+			</div>
+	</div>
+
 
     <div class="container">
 	    <div class="row">
@@ -36,6 +55,7 @@
 			{% endfor %}
 		</div>
     </div>
+</div>
 
 <script>
 function sendAddToFavorites(item_id, csrf_token) {

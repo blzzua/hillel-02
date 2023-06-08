@@ -13,25 +13,24 @@ from django.views.generic import ListView, View
 from django.core.paginator import Paginator
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
-from .filters import SearchItemFilter
+from .filters import SearchItemFilter, ItemFilter
 from django_filters.views import FilterMixin, FilterView
 
 
-def filter_item_list(request):
-    filter = ItemFilter(request.GET, queryset=Item.objects.all())
-    context = {'object_list': filter.qs, 'filter': filter}
-    return render(request=request, template_name='items/list.html', context=context)
 
 class ItemsListView(ListView, FilterMixin):
     model = Item
     template_name = 'items/list.html'
-    filter = SearchItemFilter
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        f = self.filter(self.request.GET, queryset=Item.objects.all())
-        context['filter'] = f
-        context['object_list'] = f.qs
+        query = self.request.GET.get('query')
+        if query:
+            self.filter = SearchItemFilter(self.request.GET, queryset=Item.objects.all())
+        else:
+            self.filter = ItemFilter(self.request.GET, queryset=Item.objects.all())
+        context['filter'] = self.filter
+        context['object_list'] = self.filter.qs
         return context
 
     def get_queryset(self):
