@@ -34,8 +34,11 @@ urlpatterns = [
     path('favorites/', include('favorites.urls')),
     path('import/items', ImportItemsListView.as_view(), name='import_items_csv'),
     path('export/items.csv', ExportItemsListView.as_view(), name='export_items_csv'),
-
+    path('api/v1/', include('api.urls')),
 ]
+
+urlpatterns = urlpatterns + [path('api/v1/', include('rest_framework.urls')), ]
+
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
