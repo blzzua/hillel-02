@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django_celery_results',
     'django_filters',
     'rest_framework',
+    'drf_yasg',
     #  internal packages
     'main',
     'accounts',
