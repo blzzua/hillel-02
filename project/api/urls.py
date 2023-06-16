@@ -1,8 +1,26 @@
 from django.urls import path, re_path
 from api.items.views import ItemListAPIView, ItemAPIView
-from project.urls import schema_view
+
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
 
 app_name = 'api_v1'
+
+schema_view = get_schema_view(
+   openapi.Info(
+      title="Shop API",
+      default_version='v1',
+      description="Test description",
+      terms_of_service="https://www.google.com/policies/terms/",
+      contact=openapi.Contact(email="contact@snippets.local"),
+      license=openapi.License(name="GPL License"),
+   ),
+   public=True,
+   permission_classes=[permissions.IsAuthenticated],
+)
+
 
 urlpatterns = [
     #  swagger
