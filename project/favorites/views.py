@@ -6,6 +6,7 @@ from django.http import HttpResponseNotAllowed, HttpResponse, JsonResponse
 
 from favorites.models import FavoriteItem
 from favorites.forms import AddToFavoritesForm, RemoveFromFavoritesForm, AddOrRemoveFromFavoritesForm
+from project.decorators import ajax_required
 
 User = get_user_model()
 
@@ -66,6 +67,7 @@ class FavoritesAsJsonListView(ListView):
         queryset = queryset.filter(user_id=request.user)
         return queryset
 
+    @method_decorator(ajax_required)
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset(request)
         context = self.get_context_data()
@@ -77,7 +79,7 @@ class AddOrRemoveToFavoritesView(FormView):
     model = FavoriteItem
     form_class = AddOrRemoveFromFavoritesForm
 
-    # @method_decorator(ajax_required)
+    @method_decorator(ajax_required)
     def post(self, request):
         form = AddToFavoritesForm(request.POST)
         if form.is_valid():

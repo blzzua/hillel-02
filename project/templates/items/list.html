@@ -96,7 +96,7 @@ $(document).ready(function() {
       $('a.favorite-link').each(function() {
         var item_id = $(this).data('item_id');
         if (favorites.includes(item_id)) {
-          $(this).find('span').addClass('bi-heart-fill').removeClass('bi-heart').removeClass('text-muted');
+          $(this).find('span').addClass('bi-heart-fill').addClass('text-success').removeClass('bi-heart').removeClass('text-muted');
         }
       });
     });
