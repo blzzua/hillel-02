@@ -46,6 +46,30 @@ services:
       - web
     restart: always
 
+  celery:
+    build: .
+    command: celery -A project worker -l debug
+#    working_dir: /app/project
+    restart: always
+    volumes:
+      - ./project:/app
+    depends_on:
+      - redis
+    env_file:
+      - .env
+
+  celery_beat:
+    build: .
+    command: celery -A project beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    restart: always
+    volumes:
+      - ./project:/app
+    depends_on:
+      - redis
+      - celery
+    env_file:
+      - .env
+      
 volumes:
   postgres_data:
 
