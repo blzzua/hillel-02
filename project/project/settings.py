@@ -216,11 +216,12 @@ try:
     INSTALLED_APPS_PLUS = []
     MIDDLEWARE_PLUS = []
     from .local_settings import *  # noqa
-    MIDDLEWARE += MIDDLEWARE_PLUS
-    del MIDDLEWARE_PLUS
-    if 'main' in INSTALLED_APPS:
-        INSTALLED_APPS.insert(INSTALLED_APPS.index('main'), *INSTALLED_APPS_PLUS)
-        del INSTALLED_APPS_PLUS
+    if DEBUG:
+        MIDDLEWARE += MIDDLEWARE_PLUS
+        del MIDDLEWARE_PLUS
+        if 'main' in INSTALLED_APPS:
+            INSTALLED_APPS.insert(INSTALLED_APPS.index('main'), *INSTALLED_APPS_PLUS)
+            del INSTALLED_APPS_PLUS
 except ImportError:
     print('IMPORT LOCAL SETTINGS FAIL')
     pass

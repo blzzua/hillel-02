@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+
+  web:
+    build: .
+    command: /entrypoint.sh gunicorn -b :8000 --workers 2 --threads 2 --timeout=0 'project.wsgi:application'
+    volumes:
+      - ./project:/app
+      - ./media:/media
+      - ./entrypoint.sh:/entrypoint.sh
+    ports:
+      - 8000:8000
+    env_file:
+      - .env
+    depends_on:
+      - db
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+    #container_name: webapp
+
+  db:
+    image: postgres:15.3
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data/
+    ports:
+      - 5432:5432
+    env_file:
+      - .env
+
+  redis:
+    image: redis:latest
+    restart: always
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./logs/nginx/:/project/logs/nginx/
+      - ./static_files/:/project/static_files/
+      - ./media/:/project/media/
+    depends_on:
+      - web
+    restart: always
+
+volumes:
+  postgres_data:
+
+
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 172.18.0.0/24
