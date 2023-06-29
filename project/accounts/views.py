@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib.auth.tokens import default_token_generator
 from django.core.exceptions import ImproperlyConfigured, ValidationError
 from django.http import Http404
@@ -35,10 +37,10 @@ class LoginView(FormView):
             if user:
                 login(request, user)
                 messages.success(request=request, message=f'WELLCOME {user.email} info', extra_tags="HEADER")  # noqa
-                messages.info(request=request, message=f'this is info message', extra_tags="HEADER")  # noqa
-                messages.debug(request=request, message=f'this is debug message', extra_tags="HEADER")  # noqa
-                messages.warning(request=request, message=f'this is warning message', extra_tags="HEADER")  # noqa
-                messages.error(request=request, message=f'this is error message', extra_tags="HEADER")  # noqa
+                # messages.info(request=request, message=f'this is info message', extra_tags="HEADER")  # noqa
+                # messages.debug(request=request, message=f'this is debug message', extra_tags="HEADER")  # noqa
+                # messages.warning(request=request, message=f'this is warning message', extra_tags="HEADER")  # noqa
+                # messages.error(request=request, message=f'this is error message', extra_tags="HEADER")  # noqa
                 messages.error(request=request,
                                message=f'this is error message but not shown because does not have extratag')  # noqa
                 return redirect('accounts_personal_information')
@@ -68,8 +70,8 @@ class RegistrationView(TemplateView, FormMixin):
             user = form.save()
 
             context = {
-                "domain": 'shop.com',
-                "site_name": 'shop.com',
+                "domain": 'valheim-shop-example.pp.ua',
+                "site_name": 'valheim-shop-example.pp.ua',
                 "uid": urlsafe_base64_encode(force_bytes(user.pk)),
                 "token": self.token_generator.make_token(user),
                 "protocol": "https" if request.is_secure() else "http",
@@ -82,15 +84,20 @@ class RegistrationView(TemplateView, FormMixin):
                 user.email,
                 self.html_email_template_name
             )
-            print(request, 'You have singed up successfully.')
+            url = f'http://valheim-shop-example.pp.ua/accounts/registration/{context["uid"]}/{context["token"]}/'
             messages.success(request, 'We will send email with registration link. '
-                                      'Please follow link and continue your registration flow.',
+                                      'Please follow link and continue your registration flow',
+                             extra_tags="HEADER")
+            messages.warning(request, f'Due to temporary problems link is: ' + url,
                              extra_tags="HEADER")
             # login(request, user)
             return redirect('accounts_personal_information')
         else:
             #   request, template_name, context=None, content_type=None, status=None, using=None
-            return render(request=request, template_name=self.template_name)
+            # return render(request=request, template_name=self.template_name, context=form)
+            messages.error(request, 'Some error happens.', extra_tags="HEADER")
+            return redirect('accounts_registration')
+
 
 
 class RegistrationConfirmView(RedirectView):
@@ -185,6 +192,7 @@ class ConfirmPhoneView(TemplateView, FormMixin):
                                      message=f'Congrats. Your phone number now is {new_phone}',
                                      extra_tags="HEADER")
                 user.phone = new_phone
+                user.is_phone_valid = True
                 user.save()
                 return redirect(to=self.get_redirect_url)
             else:

@@ -86,8 +86,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         send_mail(subject, message, from_email, [self.email], **kwargs)
 
     def check_optpassword(self, password):
+        logging.warning(f"authentification otp attempt: phone = {self.phone}, otp= {password}")
         if self.phone and password:
             logging.warning(f' check otppassword correct={otp_storage.get(key=self.phone)}, test={password}')
             return password == otp_storage.get(key=self.phone)
         else:
+            correct_password = otp_storage.get(key=self.phone)
+            logging.warning(f' check otppassword failed={correct_password}, test={password}')
             return False

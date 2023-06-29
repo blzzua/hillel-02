@@ -34,10 +34,10 @@ class FeedbackForm(forms.ModelForm):
         else:
             return response
 
-    def save(self, commit=True, fill_name=None):
+    def save(self, commit=True, email=None):
         feedback = super().save(commit=False)
-        if fill_name:
-            feedback.name = User.objects.get(username=fill_name)
+        if email:
+            feedback.name = User.objects.get(email=email)
         if commit:
             feedback.save()
         return feedback

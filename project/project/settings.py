@@ -91,9 +91,17 @@ WSGI_APPLICATION = 'project.wsgi.application'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
+    'sqlite': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+    },
+    "default": {
+        "ENGINE": 'django.db.backends.postgresql',
+        "NAME": os.environ.get("POSTGRES_DB", default="shopdb"),
+        "USER": os.environ.get("POSTGRES_USER", default="shopdbuser"),
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", default="shopdbpassword"),
+        "HOST": os.environ.get("POSTGRES_HOST", default="127.0.0.1"),
+        "PORT": os.environ.get("POSTGRES_PORT", default="5432"),
     }
 }
 
@@ -189,7 +197,7 @@ CELERY_BEAT_SCHEDULE = {
 }
 
 # AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.EmailModelBackend', 'django.contrib.auth.backends.PhoneModelBackend', ]
-AUTHENTICATION_BACKENDS = ['accounts.auth_backends.EmailModelBackend', 'accounts.auth_backends.PhoneModelBackend']
+AUTHENTICATION_BACKENDS = ['accounts.auth_backends.PhoneModelBackend', 'accounts.auth_backends.EmailModelBackend']
 
 
 ADMINS = (('Admin', 'admin@shop.loc'), )

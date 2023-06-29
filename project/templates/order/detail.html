@@ -12,7 +12,14 @@
                         <p> Iнформація про замовлення {{order.order_number}} </p>
                         <ul>
                             <li>is_active: {{order.is_active}}</li>
-                            <li>total_amount: {{order.total_amount}}</li>
+								<ul>
+                                    <li><strong>total_amount: {{order.total_amount}} coins</strong></li>
+									<li>{{ order.price }}&nbsp;coins</li>
+									<li>{{ order.total_amount_as_DOGE }}&nbsp;ÐOGE</li>
+									<li>{{ order.total_amount_as_UAH }}&nbsp;UAH</li>
+									<li>{{ order.total_amount_as_USD }}&nbsp;USD</li>
+									<li>{{ order.total_amount_as_EUR }}&nbsp;EUR</li>
+								</ul>
                         </ul>
                         <input hidden name="order_number" value="{{order.order_number}}" >
                     </div>

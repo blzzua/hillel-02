@@ -1,0 +1,14 @@
+			{% for product in item_list %}
+				<div class="col-md-3" style="margin-bottom: 10px; padding: 0px 5px;">
+					<div class="card" style="">
+                        <div style="background: #D2D2D2 {% if product.image %}url({{ product.image.url }}{% endif %}); background-size: cover; background-position: center; background-repeat: no-repeat; width: 100%; height: 250px;"></div>
+						<div class="card-body">
+							<h5 class="card-title">{{ product.caption }} -&nbsp;<strong>{{ product.price }}</strong>&nbsp;<i class="bi bi-coin"></i></span></h5>
+							{% if product.description %}
+							<p class="card-text">{{product.description | truncatechars:55 }}</p>
+							{% endif %}
+							<a  href="{% url 'add_orderitem' %}?item={{product.id}}" class="btn btn-primary">Order</a>
+						</div>
+					</div>
+				</div>
+			{% endfor %}

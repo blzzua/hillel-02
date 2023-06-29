@@ -58,6 +58,7 @@ class ItemCreateView(View):
 
 
 class MainPage(ItemsListView):
+    model = Item
     paginate_by = 8
     paginator = Paginator
     template_name = 'products_index.html'
@@ -66,6 +67,9 @@ class MainPage(ItemsListView):
         queryset = super().get_queryset()
         queryset = queryset.filter(is_active=True)
         return queryset
+
+    def render_to_response(self, *args, **kwargs):
+        return super().render_to_response(*args, **kwargs)
 
 
 @method_decorator(login_required(login_url=reverse_lazy('accounts_login')), name='dispatch')

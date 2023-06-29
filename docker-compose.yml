@@ -57,6 +57,9 @@ services:
       - redis
     env_file:
       - .env
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
 
   celery_beat:
     build: .
@@ -69,6 +72,9 @@ services:
       - celery
     env_file:
       - .env
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
       
 volumes:
   postgres_data:

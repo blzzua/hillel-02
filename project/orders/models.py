@@ -4,6 +4,11 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from items.models import Item, Discount
 
+from django.core.cache import caches
+from currencies.models import Currency
+from decimal import Decimal
+
+
 User = get_user_model()
 MIN_PRICE = 0.1
 
@@ -27,6 +32,32 @@ class Order(models.Model):
     #     # if OrderItem.objects.filter(order_id=self, updated_at__gte=self.updated_at):
     #     self.total_price = self.calculate_total_price()
     #     super(Order, self).save(*args, **kwargs)
+
+    def _price_as_CCY(self, ccy_code):
+        cache = caches['ccy']
+        ccy = cache.get(ccy_code)
+        if not ccy:
+            ccy = Currency.objects.get(code=ccy_code)
+            cache.set(ccy_code, ccy)
+        return Decimal(self.total_amount / ccy.amount)
+
+    @property
+    def total_amount_as_DOGE(self):
+        return Decimal(self._price_as_CCY(ccy_code='DOGE'))
+
+
+    @property
+    def total_amount_as_UAH(self):
+        return round(self._price_as_CCY(ccy_code='UAH'), 5)
+
+    @property
+    def total_amount_as_USD(self):
+        return round(self._price_as_CCY(ccy_code='USD'), 5)
+
+    @property
+    def total_amount_as_EUR(self):
+        return round(self._price_as_CCY(ccy_code='EUR'), 5)
+
 
 
 class OrderItem(models.Model):

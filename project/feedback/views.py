@@ -24,7 +24,7 @@ class FeedbackView(View):
     def post(self, request):
         form = FeedbackForm(data=request.POST)
         if form.is_valid():
-            form.save(fill_name=request.user.username)
+            form.save(email=request.user.email)
             cache.clear()
             return redirect(reverse('feedback_list'))
         else:
