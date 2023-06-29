@@ -71,6 +71,20 @@ class MainPage(ItemsListView):
     def render_to_response(self, *args, **kwargs):
         return super().render_to_response(*args, **kwargs)
 
+class AjaxItemsListView(MainPage):
+    model = Item
+    paginate_by = 8
+    paginator = Paginator
+    template_name = 'items/list_for_ajax.html'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(is_active=True)
+        return queryset
+
+    def render_to_response(self, *args, **kwargs):
+        return super().render_to_response(*args, **kwargs)
+
 
 @method_decorator(login_required(login_url=reverse_lazy('accounts_login')), name='dispatch')
 class ImportItemsListView(View):
